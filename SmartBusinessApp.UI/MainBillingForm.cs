@@ -361,5 +361,15 @@ namespace SmartBusinessApp.UI
         private void txtGross(object? sender, EventArgs e) { }
         private void label5_Click(object? sender, EventArgs e) { }
         private void dataGridView1_AutoSizeColumnsModeChanged(object? sender, DataGridViewAutoSizeColumnsModeEventArgs e) { }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            Application.Exit();
+        }
+
+        private void pictureBox1_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }

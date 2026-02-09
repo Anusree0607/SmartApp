@@ -1,6 +1,7 @@
-﻿using SmartBusinessApp.Domain; // ← change to your actual namespace if BillDto is in different project
+﻿using SmartBusinessApp.Domain; 
 using Microsoft.Data.SqlClient;
 using System.Transactions;
+using System.Data;
 
 namespace SmartBusinessApp.Infrastructure.Repositories
 {
@@ -15,6 +16,13 @@ namespace SmartBusinessApp.Infrastructure.Repositories
 
         public int SaveBill(BillDto bill)
         {
+            //DataTable DT = new DataTable(); 
+            //using SqlDataAdapter SDA = new SqlDataAdapter("select * from test", _connectionString);
+            //SDA.Fill(DT);
+
+
+
+
             using var scope = new TransactionScope(TransactionScopeOption.Required);
 
             using var conn = new Microsoft.Data.SqlClient.SqlConnection(_connectionString);
