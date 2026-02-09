@@ -14,14 +14,11 @@ namespace SmartBusinessApp.Infrastructure.Repositories
             _connectionString = connectionString;
         }
 
-        public int SaveBill(BillDto bill)
+        public Guid SaveBill(BillDto bill)
         {
             //DataTable DT = new DataTable(); 
             //using SqlDataAdapter SDA = new SqlDataAdapter("select * from test", _connectionString);
             //SDA.Fill(DT);
-
-
-
 
             using var scope = new TransactionScope(TransactionScopeOption.Required);
 
@@ -41,7 +38,7 @@ namespace SmartBusinessApp.Infrastructure.Repositories
             cmdBill.Parameters.AddWithValue("@TotalTax", bill.Items.Sum(i => i.TaxAmount));
             cmdBill.Parameters.AddWithValue("@TotalNet", bill.Items.Sum(i => i.NetAmount));
 
-            int billId = (int)cmdBill.ExecuteScalar();
+            Guid billId = (Guid)cmdBill.ExecuteScalar();
 
             // 2. Insert each BillItem
             foreach (var item in bill.Items)

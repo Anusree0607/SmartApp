@@ -30,7 +30,7 @@ public class ProductController : ControllerBase
         {
             products.Add(new ProductItem
             {
-                Id = reader.GetInt32(0),
+                Id = reader.GetGuid(0),
                 Name = reader.GetString(1),
                 Rate = reader.GetDecimal(2),
                 TaxPercent = reader.GetDecimal(3)

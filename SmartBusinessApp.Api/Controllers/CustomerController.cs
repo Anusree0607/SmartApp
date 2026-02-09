@@ -32,7 +32,7 @@ namespace SmartBusinessApp.Api.Controllers
             {
                 customers.Add(new CustomerItem
                 {
-                    Id = reader.GetInt32(0),
+                    Id = reader.GetGuid(0),
                     Name = reader.GetString(1)
                 });
             }

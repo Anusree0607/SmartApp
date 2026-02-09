@@ -6,19 +6,19 @@ namespace SmartBusinessApp.Domain
 {
     public class BranchItem
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
         public string Name { get; set; } = string.Empty;
     }
 
     public class CustomerItem
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
         public string Name { get; set; } = string.Empty;
     }
 
     public class ProductItem
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
         public required string Name { get; set; }
         public decimal Rate { get; set; }
         public decimal TaxPercent { get; set; }
@@ -27,14 +27,14 @@ namespace SmartBusinessApp.Domain
     public class BillDto
     {
         public DateTime BillDate { get; set; }
-        public int BranchId { get; set; }
-        public int CustomerId { get; set; }
+        public Guid BranchId { get; set; }
+        public Guid CustomerId { get; set; }
         public List<BillItemDto> Items { get; set; } = new();
     }
 
     public class BillItemDto
     {
-        public int  ProductId { get; set; }
+        public Guid  ProductId { get; set; }
         public int Quantity { get; set; }
         public decimal Rate { get; set; }
         public decimal TaxPercent { get; set; }

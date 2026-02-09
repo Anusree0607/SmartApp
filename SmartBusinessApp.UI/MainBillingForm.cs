@@ -3,6 +3,16 @@ using SmartBusinessApp.Domain;
 namespace SmartBusinessApp.UI
 #nullable disable
 {
+    public class ApiResponse<T>
+    {
+        public bool Success { get; set; }
+        public T? Data { get; set; }
+        public string? Message { get; set; }
+
+        // Optional: constructor helpers
+        public static ApiResponse<T> SuccessResponse(T data) => new() { Success = true, Data = data };
+        public static ApiResponse<T> ErrorResponse(string message) => new() { Success = false, Message = message };
+    }
 
     public partial class MainBillingForm : Form
     {
@@ -97,7 +107,7 @@ namespace SmartBusinessApp.UI
 
             if (col == "colProduct")
             {
-                if (dgvBillItems.Rows[e.RowIndex].Cells["colProduct"].Value is int pid)
+                if (Guid.TryParse(dgvBillItems.Rows[e.RowIndex].Cells["colProduct"].Value?.ToString(), out Guid pid))
                 {
                     var p = GetProductById(pid);
                     if (p != null)
@@ -136,7 +146,7 @@ namespace SmartBusinessApp.UI
             }
         }
 
-        private ProductItem GetProductById(int id)
+        private ProductItem GetProductById(Guid id)
         {
             var list = (List<ProductItem>)((DataGridViewComboBoxColumn)dgvBillItems.Columns["colProduct"]).DataSource;
             return list?.FirstOrDefault(p => p.Id == id);
@@ -173,26 +183,21 @@ namespace SmartBusinessApp.UI
 
         private async Task LoadProductsFromApiAsync()
         {
-            try
+            using var client = new HttpClient { BaseAddress = new Uri("https://localhost:7177/") };
+
+            var list = await client.GetFromJsonAsync<List<ProductItem>>("api/product");
+
+            if (list?.Count > 0)
             {
-                using var client = new HttpClient { BaseAddress = new Uri("https://localhost:7177/") };
-                var list = await client.GetFromJsonAsync<List<ProductItem>>("api/product");
-                if (list?.Count > 0)
-                {
-                    var col = (DataGridViewComboBoxColumn)dgvBillItems.Columns["colProduct"];
-                    col.DataSource = list;
-                    col.DisplayMember = "Name";
-                    col.ValueMember = "Id";
-                    col.FlatStyle = FlatStyle.Flat;
-                }
-                else
-                {
-                    MessageBox.Show("No products from API.");
-                }
+                var col = (DataGridViewComboBoxColumn)dgvBillItems.Columns["colProduct"];
+                col.DataSource = list;
+                col.DisplayMember = "Name";
+                col.ValueMember = "Id";
+                col.FlatStyle = FlatStyle.Flat;
             }
-            catch (Exception ex)
+            else
             {
-                MessageBox.Show($"Products load failed:\n{ex.Message}");
+                MessageBox.Show("No products available from server.", "Information");
             }
         }
 
@@ -246,33 +251,34 @@ namespace SmartBusinessApp.UI
 
         private async void label1_Click(object? sender, EventArgs e)
         {
-            // Immediate feedback that the click was registered
+            // 1. Immediate feedback (keep for UX during testing – remove later if you want)
             MessageBox.Show("Save button clicked! Starting process...", "Debug Info");
 
             var items = new List<BillItemDto>();
 
+            // 2. Collect items from grid (no try-catch needed here – parsing failures are safe)
             foreach (DataGridViewRow row in dgvBillItems.Rows)
             {
-                // Skip completely empty rows
+                // Skip empty rows
                 if (row.Cells["colProduct"].Value == null && row.Cells["colQty"].Value == null)
                     continue;
 
                 // Parse product ID
-                if (!int.TryParse(row.Cells["colProduct"].Value?.ToString(), out int pid))
+                if (!Guid.TryParse(row.Cells["colProduct"].Value?.ToString(), out Guid pid))
                     continue;
 
-                // Parse quantity and check > 0
+                // Parse quantity and check valid
                 if (!int.TryParse(row.Cells["colQty"].Value?.ToString(), out int qty) || qty <= 0)
                     continue;
 
-                // Parse calculated fields (should already be filled by RecalculateRow)
+                // Parse calculated fields (should be filled already)
                 if (!decimal.TryParse(row.Cells["colRate"].Value?.ToString(), out decimal rate) ||
                     !decimal.TryParse(row.Cells["colTaxPercent"].Value?.ToString(), out decimal tp) ||
                     !decimal.TryParse(row.Cells["colGross"].Value?.ToString(), out decimal g) ||
                     !decimal.TryParse(row.Cells["colTaxAmount"].Value?.ToString(), out decimal ta) ||
                     !decimal.TryParse(row.Cells["colNetAmount"].Value?.ToString(), out decimal n))
                 {
-                    continue;
+                    continue; // skip invalid row – no crash
                 }
 
                 items.Add(new BillItemDto
@@ -287,7 +293,7 @@ namespace SmartBusinessApp.UI
                 });
             }
 
-            // Show how many items were actually collected
+            // 3. Business validation (keep these – they are NOT exceptions)
             MessageBox.Show($"Found {items.Count} valid bill items.", "Debug Info");
 
             if (items.Count == 0)
@@ -304,55 +310,47 @@ namespace SmartBusinessApp.UI
                 return;
             }
 
+            // 4. Prepare bill
             var bill = new BillDto
             {
                 BillDate = dtpBillDate.Value,
-                BranchId = Convert.ToInt32(cmbBranch.SelectedValue),
-                CustomerId = Convert.ToInt32(cmbCustomer.SelectedValue),
                 Items = items
             };
+            // Parse BranchId (Guid)
+            if (!Guid.TryParse(cmbBranch.SelectedValue.ToString(), out Guid branchId))
+            {
+                MessageBox.Show("Invalid branch selection. Please try again.", "Validation Error");
+                return;
+            }
+            bill.BranchId = branchId;
+
+            // Parse CustomerId (Guid)
+            if (!Guid.TryParse(cmbCustomer.SelectedValue.ToString(), out Guid customerId))
+            {
+                MessageBox.Show("Invalid customer selection. Please try again.", "Validation Error");
+                return;
+            }
+            bill.CustomerId = customerId;
 
             MessageBox.Show("Bill data prepared. Attempting to save to API...", "Debug Info");
 
-            try
+            // 5. Send to API – NO try-catch here anymore!
+            using var client = new HttpClient { BaseAddress = new Uri("https://localhost:7177/") };
+            client.Timeout = TimeSpan.FromSeconds(30);
+
+            var resp = await client.PostAsJsonAsync("api/bill", bill);
+            var apiResp = await resp.Content.ReadFromJsonAsync<ApiResponse<int>>();
+
+            // 6. Handle response (only business success/failure)
+            if (resp.IsSuccessStatusCode && apiResp?.Success == true)
             {
-                using var client = new HttpClient { BaseAddress = new Uri("https://localhost:7177/") };
-
-                // Optional: add timeout to prevent hanging forever
-                client.Timeout = TimeSpan.FromSeconds(30);
-
-                var resp = await client.PostAsJsonAsync("api/bill", bill);
-
-                if (resp.IsSuccessStatusCode)
-                {
-                    var res = await resp.Content.ReadFromJsonAsync<Dictionary<string, object>>();
-                    string bid = res?.ContainsKey("billId") == true
-                        ? res["billId"]?.ToString() ?? "unknown"
-                        : "unknown";
-
-                    MessageBox.Show($"Bill saved successfully!\nBill ID: {bid}",
-                                    "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                }
-                else
-                {
-                    string errorContent = await resp.Content.ReadAsStringAsync();
-                    MessageBox.Show($"Save failed!\nStatus: {resp.StatusCode}\nDetails: {errorContent}",
-                                    "API Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
+                MessageBox.Show($"Bill saved successfully!\nBill ID: {apiResp.Data}",
+                                "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
-            catch (HttpRequestException httpEx) when (httpEx.InnerException is System.Net.Sockets.SocketException)
+            else
             {
-                MessageBox.Show("Connection failed.\nMake sure the API is running on https://localhost:7177\n\n" +
-                                httpEx.Message, "Connection Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-            catch (TaskCanceledException)
-            {
-                MessageBox.Show("Request timed out. The API might be slow or not responding.",
-                                "Timeout", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Unexpected error while saving:\n{ex.Message}\n\n{ex.StackTrace}",
+                // Show whatever the API returned (or fallback message)
+                MessageBox.Show(apiResp?.Message ?? $"Save failed (HTTP {resp.StatusCode})",
                                 "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }

@@ -26,7 +26,7 @@ namespace SmartBusinessApp.Api.Controllers
 
             try
             {
-                int billId = _repository.SaveBill(bill);
+                Guid billId = _repository.SaveBill(bill);
 
                 return Ok(new
                 {

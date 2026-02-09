@@ -35,7 +35,22 @@ namespace SmartBusinessApp.UI
         {
             textBox1.Text = "admin";
             textBox2.Text = "12345";
-            textBox2.UseSystemPasswordChar= true;
+            textBox2.UseSystemPasswordChar = true;
+        }
+
+        private void pictureBox1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label2_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
