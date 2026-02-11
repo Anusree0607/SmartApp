@@ -13,7 +13,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\SmartBusinessApp.Application\SmartBusinessApp.Application.csproj" />
     <ProjectReference Include="..\SmartBusinessApp.Domain\SmartBusinessApp.Domain.csproj" />
     <ProjectReference Include="..\SmartBusinessApp.Infrastructure\SmartBusinessApp.Infrastructure.csproj" />
     <ProjectReference Include="..\SmartBusinessApp.UI\SmartBusinessApp.UI.csproj" />

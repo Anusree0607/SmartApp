@@ -1,17 +1,22 @@
-﻿using System.Net.Http.Json;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net.Http;
+using System.Net.Http.Json;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.Diagnostics.CodeAnalysis;
 using SmartBusinessApp.Domain;
-namespace SmartBusinessApp.UI
-#nullable disable
-{
-    public class ApiResponse<T>
-    {
-        public bool Success { get; set; }
-        public T? Data { get; set; }
-        public string? Message { get; set; }
 
-        // Optional: constructor helpers
-        public static ApiResponse<T> SuccessResponse(T data) => new() { Success = true, Data = data };
-        public static ApiResponse<T> ErrorResponse(string message) => new() { Success = false, Message = message };
+#nullable enable
+
+namespace SmartBusinessApp.UI
+{
+    // Use a primary-constructor style record for conciseness and null-safety
+    public record ApiResponse<T>(bool Success = false, T? Data = default, string? Message = null)
+    {
+        public static ApiResponse<T> SuccessResponse(T data) => new(true, data);
+        public static ApiResponse<T> ErrorResponse(string message) => new(false, default, message);
     }
 
     public partial class MainBillingForm : Form
@@ -99,6 +104,14 @@ namespace SmartBusinessApp.UI
             }
         }
 
+        // Allow null return — caller already checks for null before usage.
+        private ProductItem? GetProductById(Guid id)
+        {
+            var col = (DataGridViewComboBoxColumn)dgvBillItems.Columns["colProduct"];
+            var list = col.DataSource as List<ProductItem>;
+            return list?.FirstOrDefault(p => p.Id == id);
+        }
+
         private void dgvBillItems_CellValueChanged(object? sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex < 0 || e.ColumnIndex < 0) return;
@@ -144,12 +157,6 @@ namespace SmartBusinessApp.UI
                     e.SuppressKeyPress = true;
                 }
             }
-        }
-
-        private ProductItem GetProductById(Guid id)
-        {
-            var list = (List<ProductItem>)((DataGridViewComboBoxColumn)dgvBillItems.Columns["colProduct"]).DataSource;
-            return list?.FirstOrDefault(p => p.Id == id);
         }
 
         private void RecalculateRow(int rowIndex)
@@ -366,6 +373,11 @@ namespace SmartBusinessApp.UI
         }
 
         private void pictureBox1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void pictureBox1_Click_1(object sender, EventArgs e)
         {
 
         }

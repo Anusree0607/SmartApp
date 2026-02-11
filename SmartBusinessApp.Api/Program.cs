@@ -5,8 +5,16 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddControllers();
-builder.Services.AddScoped<BillRepository>(sp =>
-    new BillRepository(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+// resolve connection string safely
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
+if (string.IsNullOrWhiteSpace(connectionString))
+    throw new InvalidOperationException("Missing required connection string 'DefaultConnection' in configuration.");
+
+var billRepo = new BillRepository(connectionString);
+
+builder.Services.AddScoped<BillRepository>(sp => billRepo);
 //Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi;
 builder.Services.AddEndpointsApiExplorer(); 
 builder.Services.AddOpenApi();

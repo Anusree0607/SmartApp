@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainBillingForm));
             cmbBranch = new ComboBox();
             label1 = new Label();
             label2 = new Label();
@@ -56,18 +55,20 @@
             // 
             cmbBranch.Font = new Font("Times New Roman", 11F, FontStyle.Italic, GraphicsUnit.Point, 0);
             cmbBranch.FormattingEnabled = true;
-            cmbBranch.Location = new Point(203, 80);
+            cmbBranch.Location = new Point(142, 48);
+            cmbBranch.Margin = new Padding(2);
             cmbBranch.Name = "cmbBranch";
-            cmbBranch.Size = new Size(268, 33);
+            cmbBranch.Size = new Size(189, 25);
             cmbBranch.TabIndex = 0;
             // 
             // label1
             // 
             label1.AutoSize = true;
             label1.Font = new Font("Times New Roman", 13F, FontStyle.Bold | FontStyle.Italic, GraphicsUnit.Point, 0);
-            label1.Location = new Point(76, 83);
+            label1.Location = new Point(53, 50);
+            label1.Margin = new Padding(2, 0, 2, 0);
             label1.Name = "label1";
-            label1.Size = new Size(93, 30);
+            label1.Size = new Size(66, 21);
             label1.TabIndex = 1;
             label1.Text = "Branch";
             label1.Click += label1_Click;
@@ -75,9 +76,10 @@
             // label2
             // 
             label2.AutoSize = true;
-            label2.Location = new Point(160, 392);
+            label2.Location = new Point(112, 235);
+            label2.Margin = new Padding(2, 0, 2, 0);
             label2.Name = "label2";
-            label2.Size = new Size(0, 25);
+            label2.Size = new Size(0, 15);
             label2.TabIndex = 2;
             label2.TextChanged += txtGross;
             // 
@@ -85,17 +87,19 @@
             // 
             cmbCustomer.Font = new Font("Times New Roman", 11F, FontStyle.Italic, GraphicsUnit.Point, 0);
             cmbCustomer.FormattingEnabled = true;
-            cmbCustomer.Location = new Point(203, 128);
+            cmbCustomer.Location = new Point(142, 77);
+            cmbCustomer.Margin = new Padding(2);
             cmbCustomer.Name = "cmbCustomer";
-            cmbCustomer.Size = new Size(268, 33);
+            cmbCustomer.Size = new Size(189, 25);
             cmbCustomer.TabIndex = 4;
             // 
             // dtpBillDate
             // 
             dtpBillDate.Font = new Font("Times New Roman", 11F, FontStyle.Bold | FontStyle.Italic, GraphicsUnit.Point, 0);
-            dtpBillDate.Location = new Point(203, 32);
+            dtpBillDate.Location = new Point(142, 19);
+            dtpBillDate.Margin = new Padding(2);
             dtpBillDate.Name = "dtpBillDate";
-            dtpBillDate.Size = new Size(268, 33);
+            dtpBillDate.Size = new Size(189, 24);
             dtpBillDate.TabIndex = 8;
             // 
             // label4
@@ -103,9 +107,10 @@
             label4.AutoSize = true;
             label4.BackColor = SystemColors.ControlLightLight;
             label4.Font = new Font("Times New Roman", 13F, FontStyle.Bold | FontStyle.Italic, GraphicsUnit.Point, 0);
-            label4.Location = new Point(83, 32);
+            label4.Location = new Point(58, 19);
+            label4.Margin = new Padding(2, 0, 2, 0);
             label4.Name = "label4";
-            label4.Size = new Size(64, 30);
+            label4.Size = new Size(45, 21);
             label4.TabIndex = 9;
             label4.Text = "Date";
             label4.Click += label4_Click;
@@ -117,12 +122,13 @@
             dgvBillItems.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dgvBillItems.Columns.AddRange(new DataGridViewColumn[] { colSNo, colProduct, colQty, colRate, colGross, colTaxPercent, colTaxAmount, colNetAmount });
             dgvBillItems.GridColor = SystemColors.ControlLight;
-            dgvBillItems.Location = new Point(76, 206);
+            dgvBillItems.Location = new Point(58, 135);
+            dgvBillItems.Margin = new Padding(2);
             dgvBillItems.Name = "dgvBillItems";
             dgvBillItems.RowHeadersVisible = false;
             dgvBillItems.RowHeadersWidth = 62;
             dgvBillItems.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvBillItems.Size = new Size(1435, 393);
+            dgvBillItems.Size = new Size(660, 292);
             dgvBillItems.TabIndex = 10;
             // 
             // colSNo
@@ -183,9 +189,10 @@
             // 
             btnSave.FlatStyle = FlatStyle.Popup;
             btnSave.Font = new Font("Times New Roman", 12F, FontStyle.Bold | FontStyle.Italic, GraphicsUnit.Point, 0);
-            btnSave.Location = new Point(1399, 131);
+            btnSave.Location = new Point(640, 91);
+            btnSave.Margin = new Padding(2);
             btnSave.Name = "btnSave";
-            btnSave.Size = new Size(112, 48);
+            btnSave.Size = new Size(78, 29);
             btnSave.TabIndex = 11;
             btnSave.Text = "Save";
             btnSave.UseVisualStyleBackColor = true;
@@ -195,9 +202,10 @@
             // 
             label3.AutoSize = true;
             label3.Font = new Font("Times New Roman", 13F, FontStyle.Bold | FontStyle.Italic, GraphicsUnit.Point, 0);
-            label3.Location = new Point(76, 131);
+            label3.Location = new Point(53, 79);
+            label3.Margin = new Padding(2, 0, 2, 0);
             label3.Name = "label3";
-            label3.Size = new Size(71, 30);
+            label3.Size = new Size(50, 21);
             label3.TabIndex = 12;
             label3.Text = "Party";
             // 
@@ -205,9 +213,10 @@
             // 
             button1.FlatStyle = FlatStyle.Popup;
             button1.Font = new Font("Times New Roman", 12F, FontStyle.Bold | FontStyle.Italic, GraphicsUnit.Point, 0);
-            button1.Location = new Point(1694, 32);
+            button1.Location = new Point(1186, 19);
+            button1.Margin = new Padding(2);
             button1.Name = "button1";
-            button1.Size = new Size(42, 42);
+            button1.Size = new Size(29, 25);
             button1.TabIndex = 13;
             button1.Text = "X";
             button1.UseVisualStyleBackColor = true;
@@ -215,19 +224,21 @@
             // 
             // pictureBox1
             // 
-            pictureBox1.Image = (Image)resources.GetObject("pictureBox1.Image");
-            pictureBox1.Location = new Point(0, 0);
+            pictureBox1.Image = Properties.Resources.BGImage;
+            pictureBox1.Location = new Point(-2, -2);
+            pictureBox1.Margin = new Padding(2);
             pictureBox1.Name = "pictureBox1";
-            pictureBox1.Size = new Size(1886, 736);
+            pictureBox1.Size = new Size(803, 525);
             pictureBox1.SizeMode = PictureBoxSizeMode.StretchImage;
             pictureBox1.TabIndex = 14;
             pictureBox1.TabStop = false;
+            pictureBox1.Click += pictureBox1_Click_1;
             // 
             // MainBillingForm
             // 
-            AutoScaleDimensions = new SizeF(10F, 25F);
+            AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1767, 678);
+            ClientSize = new Size(802, 524);
             Controls.Add(button1);
             Controls.Add(label3);
             Controls.Add(btnSave);
@@ -240,6 +251,7 @@
             Controls.Add(cmbBranch);
             Controls.Add(pictureBox1);
             FormBorderStyle = FormBorderStyle.None;
+            Margin = new Padding(2);
             Name = "MainBillingForm";
             Text = "Form1";
             Load += MainBillingForm_Load;
